@@ -1,4 +1,5 @@
-function Get-Tree {
+function Get-Tree 
+{
     Param
     (
         [Parameter(Mandatory = $true, Position = 0)] # Parametr obowiązkowy to ścieżka
@@ -13,16 +14,19 @@ function Get-Tree {
     $NumOfWordsPerParTab = @() # Tablica z iloscia slow w danym paragrafie
     $LongestWord = " " # Sluzy do znalezienia najdluzszego slowa
     $LongestSentence = @() # Sluzy do znalezienia najdluzszego zdania
-    foreach ($Paragraph in $Paragraphs) {
+    foreach ($Paragraph in $Paragraphs) 
+    {
         $Text = $Paragraph.range.Text # Tekst z każdego paragrafu
         $Text = $Text.Replace("...", "") # Usnięcie "..." w celu zliczenia ".", ktore oznaczaja ilosc zdan
         $Text = $Text.Replace(",", "") # Usnięcie "," poniewaz nie sa do niczego potrzebne a tak zaliczaly by sie do slow
         $NumOfSentences = ($Text.ToCharArray() | Where-Object { $_ -eq '.' -or $_ -eq '?' } | Measure-Object).Count # Przejscie na tablice char i zliczenie kropek lub ?
         $NumOfAllSentences += $NumOfSentences # Zwiekszenie odpowiednio wszystkich zliczonych kropek
         $Sentences = $Text.split("?.")
-        foreach ($Sentence in $Sentences) {
+        foreach ($Sentence in $Sentences) 
+        {
             $WordInSen = $Sentence.split(" ")
-            if ($WordInSen.Count -gt $LongestSentence.Count) {
+            if ($WordInSen.Count -gt $LongestSentence.Count) 
+            {
                 $LongestSentence = $WordInSen  
             }
         }
@@ -32,7 +36,8 @@ function Get-Tree {
         $NumOfWordsPerParTab += $NumOfWords # Zapisanie ilosci slow w tablicy
         $NumOfAllWords += $NumOfWords # Dodanie do sumy wszystkich wyrazow w dokumencie
         $NewLongestWord = $Words | sort length -desc | select -first 1 # Znalezienie najdluzszego slowa w danym paragrafie 
-        if ($NewLongestWord.Length -gt $LongestWord.Length) {
+        if ($NewLongestWord.Length -gt $LongestWord.Length)
+        {
             # Sprawdzenie czy jest dluzsze    
             $LongestWord = $NewLongestWord # Przypisanie nowej wartosci slowa
         }
@@ -50,29 +55,32 @@ function Get-Tree {
     $ChartLabel = New-Object system.Windows.Forms.Label # Stworzenie lejbela do wykresu
     $ChartLabel.AutoSize = $true # Ustawienie autosize
     $ChartLabel.Width = 100 # Ustawinie szerokosci
-    $ChartLabel.Height = 100 # Ustawienie wysokosci
+    $ChartLabel.Height = 150 # Ustawienie wysokosci
     $ChartLabel.Font = 'Microsoft Sans Serif,10' # Ustawienie czcionki
     $ChartLabel.Text = ("Ilosc wszystkich slow: " + $NumOfAllWords + "`n") # Tesk do wypisania
     $ChartLabel.Text += ("Ilosc wszystkich zdan: " + $NumOfAllSentences + "`n")
+    $ChartLabel.Text += ("Ilosc wszystkich paragrafow: " + $Paragraphs.Count + "`n")
     $ChartLabel.Text += ("Srednia ilosc slow na zdanie: " + ([math]::Round($NumOfAllWords / $NumOfAllSentences)) + "`n")
     $ChartLabel.Text += ("Najdluzszy paragraf ma: " + ($NumOfWordsPerParTab | measure -Maximum).Maximum + " slow" + "`n")
     $ChartLabel.Text += ("Najdluzsze slowo to: '" + $LongestWord + "'" + " i ma ono " + $LongestWord.Length + " liter" + "`n")
-    $ChartLabel.Text += ("Najdluzszy zdanie to: '")
-    foreach ($WordInLongSen in $LongestSentence) {
+    $ChartLabel.Text += ("Najdluzsze zdanie to: '")
+    foreach ($WordInLongSen in $LongestSentence) 
+    {
         $ChartLabel.Text += ($WordInLongSen + " ")
     }
     $ChartLabel.Text += ("' i ma ono " + $LongestSentence.Length + " wyrazow")
     $Window.Controls.AddRange(@($ChartLabel)) # Wypisanie
     $Window.add_paint(
         {           
-            for ($i = 0; $i -lt $NumOfWordsPerParTab.Count; $i++) {
+            for ($i = 0; $i -lt $NumOfWordsPerParTab.Count; $i++) 
+            {
                 $ChartLabel = New-Object system.Windows.Forms.Label # Stworzenie lejbela do wykresu
                 $ChartLabel.AutoSize = $false # Ustawienie autosize
                 $ChartLabel.Width = 150 # Ustawinie szerokosci
                 $ChartLabel.Height = 50 # Ustawienie wysokosci
                 $ChartLabel.Font = 'Microsoft Sans Serif,10' # Ustawienie czcionki
                 $ChartLabel.Text = ("Procent slow w paragrafie" + ($i + 1) + " dla calego tekstu") # Tesk do wypisania
-                $Where = $i * 50 + 100 # Obliczenei gdzie ma być wstawiony tekst
+                $Where = $i * 50 + 150 # Obliczenei gdzie ma być wstawiony tekst
                 $ChartLabel.Location = New-Object System.Drawing.Point((0, $Where)) # Stworzenie punktu i ustalenie gdzie ma byc wpisany tekst
                 $Window.Controls.AddRange(@($ChartLabel)) # Wypisanie
                 $Brush = new-object Drawing.SolidBrush green # Stworzenie pedzla
