@@ -12,7 +12,7 @@ function Get-Tree {
     $NumOfAllWords = 0 # Liczba wszystkich slow 
     $NumOfWordsPerParTab = @() # Tablica z iloscia slow w danym paragrafie
     $LongestWord = " " # Sluzy do znalezienia najdluzszego slowa
-    $LongestSentence = @()
+    $LongestSentence = @() # Sluzy do znalezienia najdluzszego zdania
     foreach ($Paragraph in $Paragraphs) {
         $Text = $Paragraph.range.Text # Tekst z każdego paragrafu
         $Text = $Text.Replace("...", "") # Usnięcie "..." w celu zliczenia ".", ktore oznaczaja ilosc zdan
@@ -32,7 +32,8 @@ function Get-Tree {
         $NumOfWordsPerParTab += $NumOfWords # Zapisanie ilosci slow w tablicy
         $NumOfAllWords += $NumOfWords # Dodanie do sumy wszystkich wyrazow w dokumencie
         $NewLongestWord = $Words | sort length -desc | select -first 1 # Znalezienie najdluzszego slowa w danym paragrafie 
-        if ($NewLongestWord.Length -gt $LongestWord.Length) { # Sprawdzenie czy jest dluzsze  
+        if ($NewLongestWord.Length -gt $LongestWord.Length) {
+            # Sprawdzenie czy jest dluzsze    
             $LongestWord = $NewLongestWord # Przypisanie nowej wartosci slowa
         }
     }
@@ -55,7 +56,12 @@ function Get-Tree {
     $ChartLabel.Text += ("Ilosc wszystkich zdan: " + $NumOfAllSentences + "`n")
     $ChartLabel.Text += ("Srednia ilosc slow na zdanie: " + ([math]::Round($NumOfAllWords / $NumOfAllSentences)) + "`n")
     $ChartLabel.Text += ("Najdluzszy paragraf ma: " + ($NumOfWordsPerParTab | measure -Maximum).Maximum + " slow" + "`n")
-    $ChartLabel.Text += ("Najdluzsze slowo to: " + $LongestWord + " i ma ono " + $LongestWord.Length + " liter")
+    $ChartLabel.Text += ("Najdluzsze slowo to: '" + $LongestWord + "'" + " i ma ono " + $LongestWord.Length + " liter" + "`n")
+    $ChartLabel.Text += ("Najdluzszy zdanie to: '")
+    foreach ($WordInLongSen in $LongestSentence) {
+        $ChartLabel.Text += ($WordInLongSen + " ")
+    }
+    $ChartLabel.Text += ("' i ma ono " + $LongestSentence.Length + " wyrazow")
     $Window.Controls.AddRange(@($ChartLabel)) # Wypisanie
     $Window.add_paint(
         {           
@@ -85,7 +91,7 @@ function Get-Tree {
         }
     )
     [void] $Window.ShowDialog( ) # Pokazanie okna
-    $Document.close()
-    $Word.Quit()
+    $Document.close() # Zamkniecie doca
+    $Word.Quit() # Zamkniecie word
 }
 Get-Tree -Path D:\testy\wwww.docx  # Uruchomienie funckji 
