@@ -46,11 +46,11 @@ function Get-Tree
     [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") # Zaladowanie
     $Window = New-Object System.Windows.Forms.Form # Stworzenie nowego okna
     $Window.Text = ("Analyzed " + $Path) # Nazwa okna
-    $Window.Size = New-Object System.Drawing.Size(1000 , 800) # Rozmiary okna
+    $Window.Size = New-Object System.Drawing.Size(1920 , 1080) # Rozmiary okna
     $Window.StartPosition = "CenterScreen" # Ustawienie pozycji poczatkowej okna
     $Window.TopMost = $true # Ustawienie ze caly czas na wierzchu 
     $Window.Add_Shown({ $Window.Activate() }) # Ustwaienie widocznosci
-    $Window.AutoScroll = $true # Wlaczenie opcji scrollowania
+    $Window.AutoScroll = $True # Wlaczenie opcji scrollowania
     $Graphics = $Window.createGraphics() # Stworzenie grafiki
     $ChartLabel = New-Object system.Windows.Forms.Label # Stworzenie lejbela do wykresu
     $ChartLabel.AutoSize = $true # Ustawienie autosize
